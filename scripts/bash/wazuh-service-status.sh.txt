@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# SentinelX - Wazuh Service Status
+# Purpose: Display the status of core SentinelX SOC services.
+
+echo "========================================"
+echo " SentinelX Wazuh Service Status"
+echo "========================================"
+
+SERVICES=(
+    wazuh-manager
+    wazuh-indexer
+    wazuh-dashboard
+    filebeat
+)
+
+for SERVICE in "${SERVICES[@]}"; do
+    if systemctl is-active --quiet "$SERVICE"; then
+        echo "[+] $SERVICE: ACTIVE"
+    else
+        echo "[-] $SERVICE: NOT ACTIVE"
+    fi
+done

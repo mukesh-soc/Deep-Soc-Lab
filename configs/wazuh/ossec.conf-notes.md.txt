@@ -1,0 +1,25 @@
+# Wazuh Agent Configuration Notes
+
+## Endpoint
+
+Windows-11-Endpoint
+
+## Agent
+
+Wazuh Agent 4.14.7
+
+## Wazuh Manager
+
+192.168.65.10
+
+## Sysmon Integration
+
+The Wazuh Agent collects events from the Windows Sysmon Operational event channel.
+
+Configuration block used:
+
+```xml
+<localfile>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+  <log_format>eventchannel</log_format>
+</localfile>

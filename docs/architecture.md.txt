@@ -1,0 +1,43 @@
+# SentinelX Architecture
+
+## 1. Overview
+
+SentinelX is an isolated SOC laboratory designed to collect endpoint telemetry, process security events, detect suspicious activity, and support analyst investigation.
+
+The architecture uses VirtualBox to host the laboratory systems.
+
+---
+
+## 2. Laboratory Architecture
+
+```text
+                         INTERNET
+                            |
+                           NAT
+                            |
+                    +----------------+
+                    |  Ubuntu SOC    |
+                    |    Server      |
+                    |    Wazuh       |
+                    +-------+--------+
+                            |
+                     SOC Host-Only LAN
+                            |
+             +--------------+--------------+
+             |              |              |
+             v              v              v
+       Windows 11       Ubuntu        Kali Linux
+        Endpoint        Endpoint        Attacker
+             |
+           Sysmon
+             |
+        Wazuh Agent
+             |
+             v
+       Wazuh Manager
+             |
+             v
+       Wazuh Indexer
+             |
+             v
+      Wazuh Dashboard

@@ -1,0 +1,38 @@
+# SentinelX Detection Methodology
+
+## 1. Purpose
+
+SentinelX uses a layered detection methodology in which endpoint telemetry is collected, analyzed, mapped to security techniques and investigated by a SOC analyst.
+
+The goal is not to treat every alert as malicious. Detection provides an investigation starting point.
+
+---
+
+## 2. Detection Lifecycle
+
+```text
+Telemetry
+    |
+    v
+Collection
+    |
+    v
+Normalization
+    |
+    v
+Detection
+    |
+    v
+MITRE ATT&CK Mapping
+    |
+    v
+Alert
+    |
+    v
+Investigation
+    |
+    v
+Classification
+    |
+    v
+Incident Documentation

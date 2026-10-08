@@ -1,0 +1,77 @@
+SENTINELX WAZUH EVIDENCE RECORD
+===============================
+
+Evidence ID: EVD-002
+Incident ID: INC-001
+Detection ID: SENTINELX-DET-001
+Test ID: ATTACK-001
+
+Source:
+Wazuh Dashboard / Threat Hunting
+
+Endpoint:
+Windows-11-Endpoint
+
+Agent ID:
+001
+
+Event Source:
+Microsoft-Windows-Sysmon
+
+Sysmon Event ID:
+1
+
+Detection Rule:
+92027
+
+Rule Description:
+Powershell process spawned powershell instance
+
+Rule Level:
+4
+
+Detection Group:
+sysmon
+sysmon_eid1_detection
+windows
+
+MITRE ATT&CK:
+T1059.001 - PowerShell
+
+Observed Activity:
+PowerShell process creation generated during an authorized SentinelX validation test.
+
+Test Command:
+powershell.exe -NoProfile -Command "Get-Process | Select-Object -First 5"
+
+Classification:
+Benign / Authorized Testing
+
+Incident Status:
+Closed - Controlled Test
+
+Validation:
+PASS
+
+Telemetry Path:
+Windows Endpoint
+    ->
+Sysmon
+    ->
+Wazuh Agent
+    ->
+Wazuh Manager
+    ->
+Wazuh Indexer
+    ->
+Wazuh Dashboard
+    ->
+Threat Hunting / Alerts
+
+Analyst Notes:
+The Wazuh platform successfully received and displayed the Sysmon process creation event.
+The detection was generated as expected.
+The event was reviewed as part of a controlled laboratory test and was not treated as malicious.
+
+Evidence Purpose:
+This record demonstrates successful ingestion and detection of endpoint process telemetry within SentinelX.

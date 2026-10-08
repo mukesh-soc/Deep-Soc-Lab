@@ -1,0 +1,60 @@
+SENTINELX EVIDENCE RECORD
+=========================
+
+Evidence ID: EVD-001
+Incident ID: INC-001
+Detection ID: SENTINELX-DET-001
+Test ID: ATTACK-001
+
+Source:
+Microsoft-Windows-Sysmon/Operational
+
+Event ID:
+1
+
+Event Type:
+Process Create
+
+MITRE ATT&CK:
+T1059.001 - PowerShell
+
+Observed Activity:
+PowerShell process creation during authorized SentinelX validation testing.
+
+Test Command:
+powershell.exe -NoProfile -Command "Get-Process | Select-Object -First 5"
+
+Observed Process:
+C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe
+
+Command Line:
+"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -Command "Get-Process | Select-Object -First 5"
+
+User:
+MUKESH-MCA_WALA\mukes
+
+Integrity Level:
+High
+
+Wazuh Rule:
+92027
+
+Wazuh Rule Description:
+Powershell process spawned powershell instance
+
+Classification:
+Benign / Authorized Testing
+
+Investigation Status:
+Closed - Controlled Test
+
+Validation Result:
+PASS
+
+Evidence Chain:
+Windows Endpoint -> Sysmon -> Wazuh Agent -> Wazuh Manager -> Wazuh Indexer -> Wazuh Dashboard
+
+Notes:
+This evidence was generated during an authorized laboratory test.
+The command was used to validate SentinelX telemetry collection and detection.
+No malicious payload was executed.

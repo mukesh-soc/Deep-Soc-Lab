@@ -1,0 +1,44 @@
+# INC-001: PowerShell Process Creation
+
+## 1. Incident Overview
+
+| Field | Details |
+|---|---|
+| Incident ID | INC-001 |
+| Detection ID | SENTINELX-DET-001 |
+| Detection Name | PowerShell Process Creation |
+| Date | 20 September 2026 |
+| Endpoint | Windows-11-Endpoint |
+| Agent ID | 001 |
+| Detection Source | Sysmon Event ID 1 |
+| SIEM | Wazuh |
+| MITRE ATT&CK | T1059.001 - PowerShell |
+| Severity | Low |
+| Classification | Benign / Authorized Testing |
+| Status | Closed - Controlled Test |
+
+---
+
+## 2. Objective
+
+The objective of this investigation was to validate the SentinelX SOC telemetry pipeline by generating a controlled PowerShell process-creation event on the Windows endpoint.
+
+The test was designed to confirm that:
+
+1. Sysmon records process creation.
+2. The Wazuh Agent collects Sysmon events.
+3. Wazuh Manager receives the telemetry.
+4. Wazuh detects the activity.
+5. The event appears in Wazuh Threat Hunting and Alerts.
+6. The activity can be mapped to MITRE ATT&CK.
+
+---
+
+## 3. Detection Scenario
+
+A PowerShell process was intentionally launched on the Windows endpoint during a controlled SOC laboratory test.
+
+The test command was:
+
+```powershell
+powershell.exe -NoProfile -Command "Get-Process | Select-Object -First 5"

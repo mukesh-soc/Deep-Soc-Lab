@@ -1,0 +1,32 @@
+# SentinelX Setup Guide
+
+## 1. Purpose
+
+This guide documents the setup of the SentinelX SOC laboratory.
+
+The environment uses VirtualBox, Ubuntu, Windows 11, Wazuh and Sysmon.
+
+---
+
+## 2. Laboratory Components
+
+| Component | Role |
+|---|---|
+| VirtualBox | Virtualization |
+| Ubuntu SOC Server | Wazuh infrastructure |
+| Windows 11 | Monitored endpoint |
+| Sysmon | Windows telemetry |
+| Wazuh Agent | Endpoint data collection |
+| Wazuh Manager | Security event processing |
+| Wazuh Indexer | Event storage/search |
+| Wazuh Dashboard | SOC analyst interface |
+
+---
+
+## 3. Network
+
+The SOC Host-Only network uses:
+
+```text
+Network: 192.168.65.0/24
+SOC Server: 192.168.65.10

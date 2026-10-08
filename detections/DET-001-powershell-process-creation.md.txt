@@ -1,0 +1,38 @@
+# DET-001: PowerShell Process Creation
+
+## 1. Detection Overview
+
+| Field | Details |
+|---|---|
+| Detection ID | SENTINELX-DET-001 |
+| Detection Name | PowerShell Process Creation |
+| Platform | Windows |
+| Data Source | Sysmon |
+| Sysmon Event ID | 1 |
+| SIEM | Wazuh |
+| Wazuh Rule | 92027 |
+| MITRE ATT&CK | T1059.001 |
+| Tactic | Execution |
+| Severity | Low |
+| Detection Type | Endpoint Process Monitoring |
+| Related Incident | INC-001 |
+| Status | Validated |
+
+---
+
+## 2. Purpose
+
+This detection identifies PowerShell process activity on monitored Windows endpoints.
+
+PowerShell is a legitimate Windows administration and automation tool, but it can also be used during attack execution.
+
+The purpose of this detection is to provide visibility into PowerShell process creation and allow the SOC analyst to investigate the surrounding process context.
+
+---
+
+## 3. Data Source
+
+The primary telemetry source is:
+
+```text
+Sysmon

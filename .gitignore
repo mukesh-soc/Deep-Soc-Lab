@@ -1,0 +1,48 @@
+# Secrets and credentials
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+.env
+.env.*
+secrets/
+credentials/
+
+# Wazuh sensitive files
+wazuh-passwords.txt
+api-credentials.txt
+tokens.txt
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# PowerShell
+*.ps1.bak
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# VirtualBox
+*.vdi
+*.vmdk
+*.vbox-prev

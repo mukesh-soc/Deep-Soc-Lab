@@ -1,0 +1,26 @@
+# SentinelX SOC Laboratory Report
+
+## 1. Project Overview
+
+SentinelX is a practical Security Operations Center laboratory designed to demonstrate endpoint telemetry collection, security detection, investigation and incident documentation.
+
+The laboratory currently focuses on Windows endpoint monitoring using Sysmon and Wazuh.
+
+---
+
+## 2. Objective
+
+The project aims to demonstrate an end-to-end SOC workflow:
+
+```text
+Endpoint Activity
+      ↓
+Telemetry Collection
+      ↓
+Detection
+      ↓
+MITRE ATT&CK Mapping
+      ↓
+Investigation
+      ↓
+Incident Documentation

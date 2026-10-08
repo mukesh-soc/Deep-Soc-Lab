@@ -1,0 +1,46 @@
+"""
+SentinelX - Wazuh Health Check
+
+Purpose:
+    Basic local checks for the SentinelX SOC server.
+
+This script does not modify Wazuh configuration.
+"""
+
+import subprocess
+
+
+SERVICES = [
+    "wazuh-manager",
+    "wazuh-indexer",
+    "wazuh-dashboard",
+    "filebeat",
+]
+
+
+def check_service(service):
+    result = subprocess.run(
+        ["systemctl", "is-active", service],
+        capture_output=True,
+        text=True
+    )
+
+    status = result.stdout.strip()
+
+    if status == "active":
+        print(f"[+] {service}: ACTIVE")
+    else:
+        print(f"[-] {service}: {status or 'UNKNOWN'}")
+
+
+def main():
+    print("=" * 45)
+    print(" SentinelX Wazuh Health Check")
+    print("=" * 45)
+
+    for service in SERVICES:
+        check_service(service)
+
+
+if __name__ == "__main__":
+    main()

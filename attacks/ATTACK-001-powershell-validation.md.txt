@@ -1,0 +1,34 @@
+# ATTACK-001: PowerShell Validation Test
+
+## 1. Test Overview
+
+| Field | Details |
+|---|---|
+| Test ID | ATTACK-001 |
+| Test Name | PowerShell Validation Test |
+| Test Type | Controlled SOC Validation |
+| Target | Windows-11-Endpoint |
+| Data Source | Sysmon |
+| Sysmon Event | Event ID 1 |
+| Related Detection | SENTINELX-DET-001 |
+| Related Incident | INC-001 |
+| MITRE ATT&CK | T1059.001 - PowerShell |
+| Classification | Benign / Authorized Testing |
+| Result | Successful |
+
+---
+
+## 2. Purpose
+
+The purpose of this test was to generate a controlled PowerShell process event and verify the complete SentinelX detection pipeline.
+
+The test was performed only on the authorized Windows laboratory endpoint.
+
+---
+
+## 3. Test Command
+
+The following command was executed:
+
+```powershell
+powershell.exe -NoProfile -Command "Get-Process | Select-Object -First 5"
