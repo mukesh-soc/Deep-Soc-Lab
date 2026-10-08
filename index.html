@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep SOC Lab | Mukesh Jena</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#e8eefc;text-align:center}
+    .hero{max-width:900px;margin:0 auto;padding:100px 25px}
+    h1{font-size:52px;margin-bottom:15px}
+    p{font-size:20px;color:#b9c4d9;line-height:1.6}
+    .tags{margin-top:30px;font-size:18px;color:#72a7ff;font-weight:600}.buttons{margin-top:35px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap}.btn{display:inline-block;padding:13px 24px;border:1px solid #35537d;border-radius:9px;color:#e8eefc;text-decoration:none;font-weight:700;background:#111a2d}.btn:hover{background:#182743}.hero,section{max-width:1000px;margin:0 auto;padding:70px 25px}.hero{padding-top:110px}.hero p{max-width:800px;margin:0 auto}.hero h1{letter-spacing:1px}section{border-top:1px solid #1d2940}h2{font-size:30px;margin-bottom:25px}section p{max-width:850px;margin:0 auto 30px}.architecture{max-width:700px;margin:30px auto;display:flex;flex-direction:column;gap:12px}.architecture div{background:#111a2d;border:1px solid #263654;border-radius:12px;padding:18px;font-size:18px;font-weight:600}.architecture span{font-size:14px;color:#9aa9c4;font-weight:400}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>🛡️ Deep SOC Lab</h1>
+    <p>Hands-on SOC engineering with Wazuh, Zeek, MISP, Sysmon, and Python automation.</p>
+    <div class="tags">Wazuh • Zeek • MISP • Sysmon • Python</div><div class="buttons"><a class="btn" href="https://github.com/mukesh-soc/Deep-Soc-Lab" target="_blank">View GitHub</a><a class="btn" href="#validation">View Validation</a></div>
+  </section>
+  <section>
+    <h2>🔎 Project Overview</h2>
+    <p>Deep SOC Lab demonstrates endpoint detection, network monitoring, threat intelligence enrichment, and incident investigation through an integrated Wazuh, Zeek, MISP, Sysmon, and SentinelX workflow.</p>
+    <h2>🏗️ Architecture</h2>
+    <div class="architecture">
+      <div>Windows 11 Endpoint<br><span>Sysmon / Security Events</span></div>
+      <div>↓</div>
+      <div>Wazuh<br><span>Alert Generation</span></div>
+      <div>↓</div>
+      <div>SentinelX Python<br><span>IOC Extraction &amp; Enrichment</span></div>
+      <div>↓</div>
+      <div>MISP<br><span>Threat Intelligence Match</span></div>
+    </div>
+  </section>
+  <section id="validation">
+    <h2>✅ Validated IOC Enrichment</h2>
+    <p>A controlled IOC test was executed through the lab. Zeek observed the HTTP request, SentinelX extracted the indicator, and MISP returned a positive match.</p>
+    <div class="architecture">
+      <div>Controlled IOC<br><span>192.0.2.123</span></div>
+      <div>↓</div>
+      <div>Zeek<br><span>HTTP Host: 192.0.2.123</span></div>
+      <div>↓</div>
+      <div>SentinelX<br><span>IOC extraction and MISP query</span></div>
+      <div>↓</div>
+      <div>MISP Match: TRUE ✅<br><span>Type: ip-dst · Category: Network activity · Event ID: 1</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>🧰 Technology Stack</h2>
+    <div class="architecture">
+      <div>Wazuh<br><span>Endpoint Security Monitoring</span></div>
+      <div>Zeek<br><span>Network Traffic Analysis</span></div>
+      <div>MISP<br><span>Threat Intelligence &amp; IOC Matching</span></div>
+      <div>Sysmon<br><span>Windows Endpoint Telemetry</span></div>
+      <div>Python + PyMISP<br><span>Security Automation &amp; Enrichment</span></div>
+    </div>
+  </section>
+  <section>
+    <h2>🎯 Skills Demonstrated</h2>
+    <div class="architecture">
+      <div>Security Monitoring<br><span>Wazuh alert collection and investigation</span></div>
+      <div>Network Analysis<br><span>Zeek HTTP and connection monitoring</span></div>
+      <div>Threat Intelligence<br><span>MISP IOC lookup and enrichment</span></div>
+      <div>Security Automation<br><span>Python-based IOC extraction and enrichment</span></div>
+      <div>Incident Investigation<br><span>Evidence collection and SOC documentation</span></div>
+    </div>
+  </section>
+  <section>
+    <h2>🚀 Project Status</h2>
+    <p>Working SOC lab with validated Zeek-to-SentinelX-to-MISP IOC enrichment.</p>
+    <div class="buttons">
+      <a class="btn" href="https://github.com/mukesh-soc/Deep-Soc-Lab" target="_blank">GitHub Repository</a>
+    </div>
+  </section>
+  <section>
+    <h2>👨‍💻 Author</h2>
+    <p>Mukesh Jena<br><span>MCA | Cybersecurity / SOC Analyst Lab</span></p>
+  </section>
+</body>
+</html>  <section>
+    <h2>📊 Results &amp; Evidence</h2>
+    <div class="architecture">
+      <div>Zeek HTTP Detection<br><span>Captured Windows endpoint traffic and extracted the HTTP Host indicator</span></div>
+      <div>SentinelX Enrichment<br><span>Extracted IOC and queried MISP automatically</span></div>
+      <div>MISP Positive Match ✅<br><span>192.0.2.123 matched as ip-dst in Event ID 1</span></div>
+      <div>Evidence Generation<br><span>Enrichment results saved as structured JSON evidence</span></div>
+    </div>
+  </section>
