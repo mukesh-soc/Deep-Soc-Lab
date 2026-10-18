@@ -1,0 +1,168 @@
+[
+  {
+    "event_id": "EVT-1792338948390-2",
+    "timestamp": "2026-10-18T15:55:48.390017+00:00",
+    "source": "zeek",
+    "log_type": "http",
+    "host": "Windows-11-Endpoint",
+    "agent_id": "001",
+    "src_ip": "10.0.2.15",
+    "src_port": 52142,
+    "dst_ip": "198.51.100.45",
+    "dst_port": 443,
+    "http_host": "update-service-cdn.xyz",
+    "http_uri": "/gate.php",
+    "raw_log": "1726848015.654321\tCQ45x8193\t10.0.2.15\t52142\t198.51.100.45\t443\t1\tPOST\tupdate-service-cdn.xyz\t/gate.php\t-\t1.1\tMozilla/5.0\t-\t512\t0\t403\tForbidden\t-\t-\t(empty)\t-\t-\t-\t-\t-\t-\t-\t-\t-",
+    "severity": "Medium",
+    "enrichments": [
+      {
+        "value": "198.51.100.45",
+        "type": "ip",
+        "is_malicious": true,
+        "threat_score": 98,
+        "threat_actor": "APT29 / Cozy Bear",
+        "category": "Antivirus detection / C2",
+        "event_id": 104,
+        "event_info": "Cobalt Strike Malleable C2 Beacon Listener",
+        "confidence": "Critical",
+        "comment": "Identified staging C2 server communicating over port 443 with randomized heartbeat jitter",
+        "tags": [
+          "actor:apt29",
+          "malware:cobaltstrike",
+          "threat:c2-server",
+          "tlp:amber"
+        ],
+        "mitre_techniques": [
+          "T1071 - Application Layer Protocol",
+          "T1573 - Encrypted Channel",
+          "T1090 - Proxy"
+        ],
+        "geo": {
+          "country": "Russian Federation",
+          "city": "Moscow",
+          "asn": "AS4134"
+        },
+        "misp_match": true,
+        "enriched_at": "2026-10-18T15:55:48.390054+00:00"
+      },
+      {
+        "value": "update-service-cdn.xyz",
+        "type": "domain",
+        "is_malicious": true,
+        "threat_score": 92,
+        "threat_actor": "Lumma Stealer Syndicate",
+        "category": "Payload delivery",
+        "event_id": 301,
+        "event_info": "Information Stealer Exfiltration Endpoint",
+        "confidence": "High",
+        "comment": "Newly registered domain used in phishing drive-by lure targeting crypto & browser sessions",
+        "tags": [
+          "malware:lummastealer",
+          "type:domain",
+          "phishing:credential-stealer"
+        ],
+        "mitre_techniques": [
+          "T1566.002 - Spearphishing Link",
+          "T1048 - Exfiltration Over Alternative Protocol"
+        ],
+        "geo": {
+          "country": "Seychelles",
+          "city": "Victoria",
+          "asn": "AS197695"
+        },
+        "misp_match": true,
+        "enriched_at": "2026-10-18T15:55:48.390228+00:00"
+      }
+    ],
+    "misp_match": true,
+    "threat_actor": "APT29 / Cozy Bear",
+    "threat_score": 98,
+    "alerts": [
+      {
+        "rule_id": "SENTINELX-DET-002",
+        "title": "Zeek HTTP Communication to Threat Intel IOC",
+        "description": "Triggered when Zeek network sensor records an HTTP Host or Destination IP matching a positive MISP threat intelligence indicator.",
+        "severity": "High",
+        "tactic": "Command and Control",
+        "technique_id": "T1071.001",
+        "technique_name": "Application Layer Protocol: Web Protocols",
+        "recommendation": "Isolate source host immediately and review proxy/firewall egress logs.",
+        "matched_at": "2026-10-18T15:55:48.390017+00:00"
+      },
+      {
+        "rule_id": "SENTINELX-DET-005",
+        "title": "APT29 Cobalt Strike C2 Network Beaconing",
+        "description": "Detects repetitive encrypted sessions to known adversary infrastructure (e.g., 198.51.100.45) with low jitter.",
+        "severity": "Critical",
+        "tactic": "Command and Control",
+        "technique_id": "T1573",
+        "technique_name": "Encrypted Channel",
+        "recommendation": "Sever network connection, capture memory image of endpoint, and initiate IR playbook.",
+        "matched_at": "2026-10-18T15:55:48.390017+00:00"
+      }
+    ]
+  },
+  {
+    "event_id": "EVT-1792338948388-1",
+    "timestamp": "2026-10-18T15:55:48.388933+00:00",
+    "source": "zeek",
+    "log_type": "http",
+    "host": "Windows-11-Endpoint",
+    "agent_id": "001",
+    "src_ip": "10.0.2.15",
+    "src_port": 52140,
+    "dst_ip": "10.0.2.4",
+    "dst_port": 80,
+    "http_host": "192.0.2.123",
+    "http_uri": "/api/v1/telemetry",
+    "raw_log": "1726848010.123456\tCQ45x8192\t10.0.2.15\t52140\t10.0.2.4\t80\t1\tGET\t192.0.2.123\t/api/v1/telemetry\t-\t1.1\tcurl/8.4.0\t-\t0\t1420\t200\tOK\t-\t-\t(empty)\t-\t-\t-\t-\t-\t-\tF1x99\t-\tapplication/json",
+    "severity": "Medium",
+    "enrichments": [
+      {
+        "value": "192.0.2.123",
+        "type": "ip",
+        "is_malicious": true,
+        "threat_score": 95,
+        "threat_actor": "Controlled Lab Validation (Mukesh SOC)",
+        "category": "Network activity",
+        "event_id": 1,
+        "event_info": "SentinelX Positive Zeek-to-MISP IOC Match Validation",
+        "confidence": "High",
+        "comment": "Controlled test IOC passed in HTTP Host header to validate Zeek & MISP pipeline",
+        "tags": [
+          "sentinelx:verified-ioc",
+          "misp:ip-dst",
+          "tlp:white",
+          "soc-lab"
+        ],
+        "mitre_techniques": [
+          "T1071.001 - Application Layer Protocol: Web",
+          "T1041 - Exfiltration Over C2"
+        ],
+        "geo": {
+          "country": "Documentation Net",
+          "city": "TEST-NET-1",
+          "asn": "AS64496"
+        },
+        "misp_match": true,
+        "enriched_at": "2026-10-18T15:55:48.389190+00:00"
+      }
+    ],
+    "misp_match": true,
+    "threat_actor": "Controlled Lab Validation (Mukesh SOC)",
+    "threat_score": 95,
+    "alerts": [
+      {
+        "rule_id": "SENTINELX-DET-002",
+        "title": "Zeek HTTP Communication to Threat Intel IOC",
+        "description": "Triggered when Zeek network sensor records an HTTP Host or Destination IP matching a positive MISP threat intelligence indicator.",
+        "severity": "High",
+        "tactic": "Command and Control",
+        "technique_id": "T1071.001",
+        "technique_name": "Application Layer Protocol: Web Protocols",
+        "recommendation": "Isolate source host immediately and review proxy/firewall egress logs.",
+        "matched_at": "2026-10-18T15:55:48.388933+00:00"
+      }
+    ]
+  }
+]

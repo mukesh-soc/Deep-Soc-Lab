@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentinelX | Enterprise SIEM & SOC Investigation Platform</title>
+  <link rel="stylesheet" href="/static/css/sentinelx.css">
+  <!-- Chart.js for high-fidelity interactive visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="logo-badge">
+      <div class="logo-icon">🛡️</div>
+      <div class="logo-text">
+        <h1>SENTINEL<span>X</span> SIEM</h1>
+        <span>Next-Gen SOC Intelligence &amp; SOAR</span>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div id="navSecurityStatus" style="font-size: 11px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.25);">
+        <span class="pulse-indicator"></span> 2FA ACTIVE (RFC 6238)
+      </div>
+
+      <button class="btn-secondary" onclick="open2FASetupModal()" title="View or Enroll Authenticator App (Google Authenticator / Authy)">
+        🔐 2FA Setup
+      </button>
+
+      <button class="btn-recruiter" onclick="startRecruiterTour()" title="Launch Guided Recruiter Walkthrough">
+        🎯 Recruiter Tour &amp; Demo
+      </button>
+
+      <div style="display: flex; align-items: center; gap: 8px; margin-left: 8px; border-left: 1px solid var(--border-color); padding-left: 12px;">
+        <div style="text-align: right;">
+          <div id="navUserBadge" style="font-size: 13px; font-weight: 700; color: #fff;">Mukesh Jena</div>
+          <div id="navUserRole" style="font-size: 10px; color: #38bdf8; font-weight: 600;">LEAD SOC ARCHITECT</div>
+        </div>
+        <button id="navLogoutBtn" class="btn-danger" onclick="handleLogout()" title="Logout of Session">Logout</button>
+        <button id="navLoginBtn" class="btn-primary" style="display: none;" onclick="openLoginModal()">Login</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Recruiter Showcase Hero Banner -->
+  <section class="recruiter-hero-banner">
+    <div class="candidate-info">
+      <div class="candidate-avatar">MJ</div>
+      <div class="candidate-details">
+        <h2>Mukesh Jena <span style="font-size: 12px; font-weight: 400; color: #38bdf8;">(MCA) · SOC Analyst &amp; Detection Engineer</span></h2>
+        <p>Production SIEM integrating Wazuh, Zeek, MISP, Sysmon, and Python Security Automation.</p>
+        <div class="candidate-badges">
+          <span class="pill-badge">Endpoint Detection</span>
+          <span class="pill-badge">Zeek Network Analysis</span>
+          <span class="pill-badge">MISP Threat Intel</span>
+          <span class="pill-badge">Sysmon EID 1 &amp; 10</span>
+          <span class="pill-badge">MITRE ATT&amp;CK Mapping</span>
+          <span class="pill-badge">Zero-Trust &amp; 2FA</span>
+          <span class="pill-badge">Python / SOAR</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+      <button class="btn-secondary" onclick="replayScenario('scenario_misp_zeek')">
+        ▶ Replay Lab IOC Validation (192.0.2.123)
+      </button>
+      <button class="btn-secondary" onclick="replayScenario('scenario_apt29_c2')">
+        ▶ Replay APT29 C2 Attack
+      </button>
+      <button class="btn-primary" onclick="openCandidateModal()">
+        💼 Hire Mukesh
+      </button>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-container">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      📊 Live SIEM Dashboard
+    </button>
+    <button class="tab-btn" data-tab="hunting" onclick="switchTab('hunting')">
+      🔍 Threat Hunting &amp; Telemetry
+    </button>
+    <button class="tab-btn" data-tab="ingest" onclick="switchTab('ingest')">
+      📥 Live Log Ingester
+    </button>
+    <button class="tab-btn" data-tab="enrichment" onclick="switchTab('enrichment')">
+      ⚡ MISP Threat Intel &amp; IOCs
+    </button>
+    <button class="tab-btn" data-tab="incidents" onclick="switchTab('incidents')">
+      📁 Case Management (Incidents)
+    </button>
+    <button class="tab-btn" data-tab="soar" onclick="switchTab('soar')">
+      🤖 Automated SOAR Playbooks
+    </button>
+    <button class="tab-btn" data-tab="architecture" onclick="switchTab('architecture')">
+      🏗️ The Making Process (For Recruiters)
+    </button>
+  </nav>
+
+  <!-- Main Content Body -->
+  <main class="main-content">
+
+    <!-- 1. DASHBOARD TAB -->
+    <div id="tab-dashboard" class="tab-pane active">
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <div class="glass-panel metric-card">
+          <div>
+            <div class="metric-label">Ingested Events</div>
+            <div class="metric-value" id="metricTotalEvents">0</div>
+          </div>
+          <div class="metric-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">📊</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div>
+            <div class="metric-label">Active SIEM Alerts</div>
+            <div class="metric-value" id="metricTotalAlerts" style="color: #f43f5e;">0</div>
+          </div>
+          <div class="metric-icon-box" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e;">🚨</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div>
+            <div class="metric-label">MISP Threat Hits</div>
+            <div class="metric-value" id="metricMispHits" style="color: #8b5cf6;">0</div>
+          </div>
+          <div class="metric-icon-box" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">⚡</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div>
+            <div class="metric-label">Open Incidents</div>
+            <div class="metric-value" id="metricActiveIncidents" style="color: #f59e0b;">0</div>
+          </div>
+          <div class="metric-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">📁</div>
+        </div>
+      </div>
+
+      <!-- Visualization Charts Grid -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px;">
+        <div class="glass-panel" style="padding: 20px;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+            <span>📈 Real-Time Ingestion Rate vs Alerts</span>
+            <span style="font-size: 11px; color: #10b981; font-weight: 600;">● LIVE STREAM</span>
+          </h3>
+          <div style="height: 240px; position: relative;">
+            <canvas id="timelineChartCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel" style="padding: 20px;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff;">
+            🎯 Alert Severity Distribution
+          </h3>
+          <div style="height: 240px; position: relative;">
+            <canvas id="severityChartCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- MITRE Matrix & Realtime Alerts -->
+      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px;">
+        <div class="glass-panel" style="padding: 20px;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff;">
+            🛡️ MITRE ATT&amp;CK Technique Coverage
+          </h3>
+          <div style="height: 240px; position: relative;">
+            <canvas id="mitreChartCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel" style="padding: 20px;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+            <span>🚨 Recent Correlated Security Alerts</span>
+            <button class="btn-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="refreshSIEM()">Refresh Feed</button>
+          </h3>
+          <div id="dashboardAlertsList" style="max-height: 240px; overflow-y: auto;">
+            <div style="text-align: center; color: #64748b; padding: 20px;">Loading alerts...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. THREAT HUNTING TAB -->
+    <div id="tab-hunting" class="tab-pane">
+      <div class="glass-panel" style="padding: 20px; margin-bottom: 16px;">
+        <form onsubmit="handleTelemetrySearch(event)" style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <input type="text" id="telemetrySearchInput" placeholder="Filter syntax: ip:192.0.2.123 | source:zeek | severity:Critical | powershell" style="flex: 1; background: #090e1a; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13px; font-family: monospace;">
+          <button type="submit" class="btn-primary">Search Telemetry</button>
+        </form>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Quick Filters:</span>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('all')">All Records</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('ip:192.0.2.123')">Mukesh IOC (192.0.2.123)</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('source:zeek')">Zeek Network</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('source:sysmon')">Sysmon Process</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('severity:Critical')">Critical Severity</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="setTelemetryFilter('powershell')">PowerShell Execution</button>
+        </div>
+      </div>
+
+      <div class="glass-panel table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Source</th>
+              <th>Host</th>
+              <th>Process / URI</th>
+              <th>Key Indicator / IOC</th>
+              <th>Severity</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="telemetryTableBody">
+            <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 24px;">Loading telemetry database...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. LIVE LOG INGESTER TAB -->
+    <div id="tab-ingest" class="tab-pane">
+      <div class="glass-panel" style="padding: 24px; max-width: 1000px; margin: 0 auto;">
+        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff;">
+          📥 Live Telemetry Ingestion &amp; Correlation Pipeline
+        </h2>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+          Paste raw network logs (Zeek TSV), endpoint alert JSON (Wazuh / Sysmon), or custom telemetry to parse, extract IOCs, query MISP, and run Sigma correlation rules.
+        </p>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+          <span style="font-size: 12px; color: var(--text-dim); align-self: center;">Preload Sample:</span>
+          <button class="btn-secondary" style="font-size: 12px;" onclick="loadLogPreset('zeek')">Mukesh Zeek HTTP Log (192.0.2.123)</button>
+          <button class="btn-secondary" style="font-size: 12px;" onclick="loadLogPreset('powershell')">Wazuh Sysmon EID 1 Log</button>
+          <button class="btn-secondary" style="font-size: 12px;" onclick="loadLogPreset('apt29')">APT29 Cobalt Strike Alert</button>
+          <button class="btn-secondary" style="font-size: 12px;" onclick="loadLogPreset('ransomware')">LockBit VSS Shadow Deletion</button>
+        </div>
+
+        <textarea id="rawLogInput" rows="12" placeholder="Paste Zeek TSV log, Wazuh JSON alert, Sysmon XML, or syslog text here..." style="width: 100%; background: #090e1a; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; color: #38bdf8; font-family: monospace; font-size: 12px; margin-bottom: 16px; resize: vertical;"></textarea>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 12px; color: #64748b;">
+            Supports: Elastic Common Schema (ECS), Zeek <code>http.log / conn.log</code>, Wazuh Manager JSON, Sysmon EID 1/3/10.
+          </div>
+          <button id="btnSubmitIngest" class="btn-primary" style="padding: 10px 24px; font-size: 14px;" onclick="submitLogIngestion()">
+            ⚡ Ingest &amp; Run Detection Engine
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MISP THREAT INTEL TAB -->
+    <div id="tab-enrichment" class="tab-pane">
+      <div class="glass-panel" style="padding: 24px; max-width: 900px; margin: 0 auto 20px auto;">
+        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff;">
+          ⚡ MISP Threat Intelligence &amp; Indicator Investigator
+        </h2>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 16px;">
+          Query any IP address, domain, or file hash. Resolves against live PyMISP instances, offline high-fidelity threat databases, and correlates internal event telemetry.
+        </p>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <input type="text" id="iocSearchInput" placeholder="Enter IP (e.g. 192.0.2.123 or 198.51.100.45) or SHA256 hash..." style="flex: 1; background: #090e1a; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: #fff; font-family: monospace; font-size: 13px;">
+          <button class="btn-primary" style="padding: 0 20px;" onclick="queryIOC()">Lookup Threat Intel</button>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 11px; color: var(--text-dim); align-self: center;">Test Indicators:</span>
+          <button class="pill-badge" style="cursor: pointer;" onclick="document.getElementById('iocSearchInput').value='192.0.2.123'; queryIOC();">192.0.2.123 (Lab Positive Match)</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="document.getElementById('iocSearchInput').value='198.51.100.45'; queryIOC();">198.51.100.45 (APT29 C2)</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="document.getElementById('iocSearchInput').value='update-service-cdn.xyz'; queryIOC();">update-service-cdn.xyz (Lumma Stealer)</button>
+          <button class="pill-badge" style="cursor: pointer;" onclick="document.getElementById('iocSearchInput').value='e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; queryIOC();">LockBit Hash (SHA256)</button>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div id="iocResultCard" class="glass-panel" style="padding: 24px; max-width: 900px; margin: 0 auto; display: none;"></div>
+    </div>
+
+    <!-- 5. CASE MANAGEMENT (INCIDENTS) TAB -->
+    <div id="tab-incidents" class="tab-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 700; color: #fff;">📁 Incident Response Cases</h2>
+          <p style="font-size: 13px; color: #94a3b8;">SOC investigations, forensic timelines, and evidence tracking.</p>
+        </div>
+        <div style="font-size: 12px; color: #64748b;">
+          Click "Manage Case" to update status or "Formal Report" for printable executive documentation.
+        </div>
+      </div>
+
+      <div id="incidentsCardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px;">
+        <div style="text-align: center; color: #64748b; padding: 24px;">Loading active incident cases...</div>
+      </div>
+    </div>
+
+    <!-- 6. SOAR AUTOMATION TAB -->
+    <div id="tab-soar" class="tab-pane">
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
+        <!-- Playbook trigger panel -->
+        <div class="glass-panel" style="padding: 24px;">
+          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff;">
+            🤖 SOAR Playbook Execution
+          </h2>
+          <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+            Trigger immediate security containment actions to mitigate adversary activity.
+          </p>
+
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 12px; color: var(--text-dim); text-transform: uppercase;">Select Playbook</label>
+            <select id="soarPlaybookSelect" style="width: 100%; background: #090e1a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #fff; margin-top: 6px; font-size: 13px;">
+              <option value="QUARANTINE_IP">Block Adversary IP (Firewall Drop Rule)</option>
+              <option value="ISOLATE_HOST">Isolate Endpoint Host (Wazuh Active-Response)</option>
+              <option value="KILL_PROCESS">Terminate Malicious Process / PID</option>
+              <option value="SUBMIT_MISP_IOC">Submit New Indicator to MISP Threat Event</option>
+              <option value="DISPATCH_WEBHOOK">Dispatch Critical Alert to SOC Webhook</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="font-size: 12px; color: var(--text-dim); text-transform: uppercase;">Target (IP / Host / PID / Hash)</label>
+            <input type="text" id="soarTargetInput" value="198.51.100.45" style="width: 100%; background: #090e1a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #38bdf8; margin-top: 6px; font-family: monospace; font-size: 13px;">
+          </div>
+
+          <button class="btn-danger" style="width: 100%; padding: 12px; font-size: 14px;" onclick="triggerSOARPlaybook(document.getElementById('soarPlaybookSelect').value, document.getElementById('soarTargetInput').value)">
+            ⚡ Execute Automated Playbook
+          </button>
+        </div>
+
+        <!-- Execution History Table -->
+        <div class="glass-panel table-container" style="padding: 20px;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff;">
+            📜 SOAR Playbook Execution Audit History
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Playbook</th>
+                <th>Target</th>
+                <th>Status</th>
+                <th>Remediation Details</th>
+              </tr>
+            </thead>
+            <tbody id="soarHistoryTableBody">
+              <tr><td colspan="5" style="text-align: center; color: #64748b;">Loading history...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. THE MAKING PROCESS (FOR RECRUITERS) TAB -->
+    <div id="tab-architecture" class="tab-pane">
+      <div class="glass-panel" style="padding: 32px; max-width: 1100px; margin: 0 auto;">
+        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #fff;">
+              🏗️ The Making of SentinelX: Engineering Brief
+            </h2>
+            <p style="font-size: 14px; color: #38bdf8; margin-top: 4px;">
+              Written specifically for SOC Hiring Managers, Lead Architects, and Technical Recruiters.
+            </p>
+          </div>
+          <a href="/recruiter-brief" target="_blank" class="btn-recruiter" style="text-decoration: none;">
+            📄 Full Technical Brief View
+          </a>
+        </div>
+
+        <!-- 4-Phase Architecture Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 30px;">
+          <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">PHASE 1</div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;">Isolated Virtual SOC</h4>
+            <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Configured isolated VirtualBox LAN hosting Windows 11 endpoint with Sysmon, Ubuntu SOC server with Wazuh &amp; Zeek, and Kali Linux attacker node.</p>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 700; color: #10b981; margin-bottom: 6px;">PHASE 2</div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;">Telemetry &amp; Normalization</h4>
+            <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Built Python ingestion pipeline normalizing heterogeneous logs (Zeek TSV, Wazuh JSON, Sysmon EID 1 &amp; 10) into Elastic Common Schema (ECS).</p>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 700; color: #f59e0b; margin-bottom: 6px;">PHASE 3</div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;">MISP &amp; Detection Correlation</h4>
+            <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Created PyMISP integration. Validated positive threat intel match using controlled IOC <code>192.0.2.123</code>. Mapped Sigma rules to MITRE ATT&amp;CK matrix.</p>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 700; color: #8b5cf6; margin-bottom: 6px;">PHASE 4</div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;">Zero-Trust 2FA &amp; Fullstack</h4>
+            <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Engineered full production platform with RFC 6238 TOTP 2FA, QR enrollment, SOAR playbooks, interactive Astro + Flask architecture, and Docker deployment.</p>
+          </div>
+        </div>
+
+        <!-- Technical Highlights & Metrics Table -->
+        <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">📊 Engineering Impact &amp; Metrics</h3>
+        <div class="table-container" style="margin-bottom: 28px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Engineering Metric</th>
+                <th>Standard Home Lab</th>
+                <th>SentinelX Production Platform</th>
+                <th>Operational Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>IOC Enrichment Latency</strong></td>
+                <td>Manual search (>5 mins)</td>
+                <td style="color:#10b981; font-weight:700;">&lt; 40 ms (automated)</td>
+                <td>Enables real-time blocking before lateral movement</td>
+              </tr>
+              <tr>
+                <td><strong>Mean Time to Respond (MTTR)</strong></td>
+                <td>~45 minutes</td>
+                <td style="color:#10b981; font-weight:700;">&lt; 3 minutes</td>
+                <td>70% MTTR reduction via automated SOAR playbooks</td>
+              </tr>
+              <tr>
+                <td><strong>Authentication Security</strong></td>
+                <td>Plaintext / None</td>
+                <td style="color:#38bdf8; font-weight:700;">PBKDF2 + RFC 6238 TOTP 2FA</td>
+                <td>Full enterprise Zero-Trust compliance</td>
+              </tr>
+              <tr>
+                <td><strong>Telemetry Correlation</strong></td>
+                <td>Siloed individual tools</td>
+                <td style="color:#8b5cf6; font-weight:700;">ECS Unified Engine (Wazuh + Zeek + Sysmon)</td>
+                <td>Eliminates blind spots between network and endpoint</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Call to action -->
+        <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 24px; text-align: center;">
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px;">Ready to Add a Dedicated Security Engineer to Your Team?</h3>
+          <p style="font-size: 13px; color: #cbd5e1; max-width: 600px; margin: 0 auto 16px auto;">
+            Mukesh brings practical experience in detection engineering, SIEM architecture, network forensics, threat hunting, and automated Python security tooling.
+          </p>
+          <button class="btn-recruiter" style="padding: 10px 24px; font-size: 14px; margin: 0 auto;" onclick="openCandidateModal()">
+            💼 Connect with Mukesh Jena
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================================ -->
+  <!-- MODALS -->
+  <!-- ============================================================================ -->
+
+  <!-- 1. Login & 2FA Modal -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 16px; font-weight: 700;">🔐 SentinelX Zero-Trust Authentication</h3>
+        <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+      </div>
+
+      <!-- Step 1: Credentials -->
+      <form id="loginStep1" onsubmit="handleLoginStep1(event)">
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 16px;">
+          Enter credentials to access the SOC platform. Recruiter demo account is prefilled below.
+        </p>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Username</label>
+          <input type="text" id="loginUsername" value="recruiter" style="width: 100%; background: #090e1a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #fff; font-size: 13px; margin-top: 4px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Password</label>
+          <input type="password" id="loginPassword" value="recruiter" style="width: 100%; background: #090e1a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #fff; font-size: 13px; margin-top: 4px;">
+        </div>
+        <div id="loginError" style="display: none; color: #f43f5e; font-size: 12px; margin-bottom: 14px;"></div>
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px;">
+          Proceed to 2FA Verification &rarr;
+        </button>
+      </form>
+
+      <!-- Step 2: 2FA TOTP -->
+      <form id="loginStep2" onsubmit="handleLoginStep2(event)" style="display: none;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 32px; margin-bottom: 8px;">📱</div>
+          <h4 style="font-size: 16px; font-weight: 700; color: #fff;">Two-Factor Authentication (2FA)</h4>
+          <p style="font-size: 12px; color: #94a3b8;">
+            Enter the 6-digit TOTP code for <span id="totpTargetUser" style="color: #38bdf8; font-weight: 600;"></span> from your Authenticator app.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="totpTokenInput" maxlength="6" placeholder="000000" style="width: 100%; background: #090e1a; border: 2px solid #38bdf8; border-radius: 8px; padding: 12px; color: #fff; text-align: center; font-size: 28px; letter-spacing: 6px; font-family: monospace;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 11px; color: var(--text-dim);">
+            <span>Time-window refresh in: <strong id="totpTimerSeconds" style="color: #38bdf8;">30s</strong></span>
+            <span id="totpAutofillHint"></span>
+          </div>
+        </div>
+
+        <!-- Recruiter Convenience Autofill -->
+        <div style="background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 12px; color: #cbd5e1;">Recruiter / Evaluator Fast-Track:</div>
+          <button type="button" class="btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="autofillRecruiter2FA()">
+            ⚡ Autofill Live 2FA Code
+          </button>
+        </div>
+
+        <div id="loginErrorStep2" style="display: none; color: #f43f5e; font-size: 12px; margin-bottom: 14px;"></div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-secondary" style="flex: 1;" onclick="openLoginModal()">Back</button>
+          <button type="submit" class="btn-primary" style="flex: 2; padding: 12px; font-size: 14px;">
+            Verify &amp; Enter SOC
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. 2FA Setup QR Code Modal -->
+  <div id="twoFaSetupModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 480px; text-align: center;">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 16px; font-weight: 700;">📱 Setup Mobile Authenticator (2FA)</h3>
+        <button class="modal-close" onclick="close2FASetupModal()">&times;</button>
+      </div>
+
+      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;">
+        Scan this QR code with <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong>, or <strong>Authy</strong> on your phone.
+      </p>
+
+      <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
+        <img id="qrCodeImg" src="" alt="2FA QR Code" style="width: 180px; height: 180px; display: block;">
+      </div>
+
+      <div style="margin-bottom: 16px; text-align: left;">
+        <label style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Manual Base32 Secret Key</label>
+        <div id="setupSecretKey" class="mono-cell" style="background: #090e1a; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 13px; margin-top: 4px; word-break: break-all;"></div>
+      </div>
+
+      <input type="hidden" id="setupTotpUri">
+
+      <button class="btn-primary" style="width: 100%;" onclick="close2FASetupModal()">
+        I Have Enrolled My Device
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. Recruiter Tour Modal -->
+  <div id="recruiterTourModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 id="tourStepTitle" style="color: #fff; font-size: 18px; font-weight: 700;"></h3>
+        <button class="modal-close" onclick="closeTourModal()">&times;</button>
+      </div>
+      <div id="tourStepContent" style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px;"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
+        <span id="tourStepIndicator" style="font-size: 12px; color: var(--text-dim);"></span>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-secondary" onclick="prevTourStep()">Previous</button>
+          <button class="btn-primary" onclick="nextTourStep()">Next Step &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Event Detail Modal -->
+  <div id="eventDetailModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 16px; font-weight: 700;">🔍 Telemetry Deep Inspection</h3>
+        <button class="modal-close" onclick="closeEventDetailModal()">&times;</button>
+      </div>
+      <div id="eventDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- 5. Incident Modal -->
+  <div id="incidentModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 16px; font-weight: 700;">📁 Incident Case Workbench</h3>
+        <button class="modal-close" onclick="closeIncidentModal()">&times;</button>
+      </div>
+      <div id="incidentModalContent"></div>
+    </div>
+  </div>
+
+  <!-- 6. Candidate Contact Modal -->
+  <div id="candidateModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 520px; text-align: center;">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 18px; font-weight: 700;">👨‍💻 Hire Mukesh Jena</h3>
+        <button class="modal-close" onclick="closeCandidateModal()">&times;</button>
+      </div>
+
+      <div class="candidate-avatar" style="width: 64px; height: 64px; font-size: 26px; margin: 0 auto 16px auto;">MJ</div>
+      <h3 style="color: #fff; font-size: 18px; font-weight: 700;">Mukesh Jena (MCA)</h3>
+      <p style="font-size: 13px; color: #38bdf8; margin-top: 2px;">Cybersecurity &amp; SOC Analyst · Detection Engineer</p>
+      <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 12px 0 20px 0;">
+        Specialized in Wazuh, Zeek, MISP, Sysmon, and Python security automation. Available for SOC Analyst (L1/L2), Incident Responder, and Detection Engineering roles.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+        <a href="https://github.com/mukesh-soc/Deep-Soc-Lab" target="_blank" class="btn-secondary" style="justify-content: center; text-decoration: none; padding: 10px;">
+          🐙 GitHub: github.com/mukesh-soc
+        </a>
+        <a href="mailto:mukesh.soc.analyst@gmail.com" class="btn-primary" style="justify-content: center; text-decoration: none; padding: 10px;">
+          ✉️ Email: mukesh.soc.analyst@gmail.com
+        </a>
+      </div>
+
+      <button class="btn-secondary" style="width: 100%;" onclick="closeCandidateModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column;"></div>
+
+  <!-- Client JavaScript modules -->
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/investigator.js"></script>
+  <script src="/static/js/recruiter_tour.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

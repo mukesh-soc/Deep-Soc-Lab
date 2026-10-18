@@ -46,3 +46,8 @@ desktop.ini
 *.vdi
 *.vmdk
 *.vbox-prev
+
+# Node & Astro
+node_modules/
+dist/
+.astro/

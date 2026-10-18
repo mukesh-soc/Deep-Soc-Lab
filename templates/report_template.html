@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOC Investigation Report - {{ incident.incident_id }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #f8fafc;
+      margin: 0;
+      padding: 40px;
+    }
+    .report-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 48px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    .report-title h1 {
+      margin: 0;
+      font-size: 26px;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+    .report-title p {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .badge-critical { background: #fee2e2; color: #b91c1c; }
+    .badge-high { background: #fef3c7; color: #b45309; }
+    .badge-low { background: #dcfce7; color: #15803d; }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      background: #f1f5f9;
+      padding: 18px;
+      border-radius: 6px;
+      margin-bottom: 28px;
+      font-size: 13px;
+    }
+    .meta-item strong { display: block; color: #475569; font-size: 11px; text-transform: uppercase; }
+    h2 {
+      font-size: 18px;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th { background: #f8fafc; font-weight: 600; color: #334155; }
+    code {
+      font-family: Consolas, Monaco, monospace;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0f172a;
+      font-size: 12px;
+    }
+    .print-actions {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn:hover { background: #0369a1; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .report-container { border: none; box-shadow: none; padding: 0; }
+      .print-actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="report-container">
+    <div class="print-actions">
+      <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
+
+    <div class="report-header">
+      <div class="report-title">
+        <h1>SENTINELX SOC INCIDENT REPORT</h1>
+        <p>Security Operations Center · Deep Threat Investigation</p>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge {% if incident.severity == 'Critical' %}badge-critical{% elif incident.severity == 'High' %}badge-high{% else %}badge-low{% endif %}">
+          {{ incident.severity }} SEVERITY
+        </span>
+        <div style="font-size: 12px; color: #64748b; margin-top: 6px;">TLP: AMBER+STRICT</div>
+      </div>
+    </div>
+
+    <div class="meta-grid">
+      <div class="meta-item"><strong>Incident ID</strong> {{ incident.incident_id }}</div>
+      <div class="meta-item"><strong>Lead Investigator</strong> {{ incident.assignee }} (MCA)</div>
+      <div class="meta-item"><strong>Classification</strong> {{ incident.classification }}</div>
+      <div class="meta-item"><strong>Impacted Host</strong> {{ incident.endpoint }}</div>
+      <div class="meta-item"><strong>Detection Source</strong> {{ incident.source }}</div>
+      <div class="meta-item"><strong>Current Status</strong> {{ incident.status }}</div>
+      <div class="meta-item"><strong>Created Timestamp</strong> {{ incident.created_at }}</div>
+      <div class="meta-item"><strong>Closed Timestamp</strong> {{ incident.closed_at or 'In Progress' }}</div>
+      <div class="meta-item"><strong>MITRE ATT&amp;CK</strong> {{ incident.mitre_technique }}</div>
+    </div>
+
+    <h2>1. Executive Summary</h2>
+    <p>{{ incident.summary }}</p>
+
+    <h2>2. Observed Adversary / Telemetry Artifacts</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Indicator / Artifact</th>
+          <th>Type</th>
+          <th>Detection Telemetry Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if incident.command_observed %}
+        <tr>
+          <td><code>{{ incident.command_observed }}</code></td>
+          <td>Process Execution Command</td>
+          <td>Sysmon Event ID 1 / Wazuh Rule</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td><code>{{ incident.endpoint }}</code></td>
+          <td>Monitored Target Endpoint</td>
+          <td>Agent ID: {{ incident.agent_id }}</td>
+        </tr>
+        <tr>
+          <td><code>{{ incident.mitre_technique }}</code></td>
+          <td>Adversary Tactic / Technique</td>
+          <td>MITRE ATT&amp;CK Matrix</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Forensic Event Timeline</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 140px;">Time (UTC)</th>
+          <th>Activity Observed / Telemetry Event</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in incident.timeline %}
+        <tr>
+          <td><code>{{ event.time }}</code></td>
+          <td>{{ event.event }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>4. Analyst Findings &amp; Evidence Files</h2>
+    <ul>
+      {% for file in incident.evidence_files %}
+      <li>Linked Evidence File: <code>{{ file }}</code></li>
+      {% endfor %}
+    </ul>
+
+    {% if incident.notes %}
+    <h2>5. Analyst Investigation Notes</h2>
+    {% for note in incident.notes %}
+    <div style="background: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 16px; margin-bottom: 10px;">
+      <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">{{ note.author }} · {{ note.time }}</div>
+      <div>{{ note.text }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <h2>6. Containment, Remediation &amp; Recommendations</h2>
+    <ol>
+      <li><strong>Containment Verification:</strong> Validate network segregation and ensure all telemetry streams are ingested without packet loss.</li>
+      <li><strong>Threat Intel Integration:</strong> Indicators persisted to MISP for continuous correlation across perimeter firewalls.</li>
+      <li><strong>Detection Tuning:</strong> Confirm Sigma rules are active in Wazuh and Sysmon telemetry policies.</li>
+    </ol>
+
+    <div style="margin-top: 48px; border-top: 1px solid #cbd5e1; padding-top: 16px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b;">
+      <div>Generated by SentinelX Enterprise SOC Platform</div>
+      <div>Investigator Signature: <strong>Mukesh Jena</strong></div>
+    </div>
+  </div>
+
+</body>
+</html>

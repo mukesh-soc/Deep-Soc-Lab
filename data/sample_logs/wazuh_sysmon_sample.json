@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-09-20T10:15:02.450Z",
+  "rule": {
+    "level": "Low",
+    "description": "Powershell process spawned powershell instance",
+    "id": "92027",
+    "mitre": {
+      "id": ["T1059.001"],
+      "tactic": ["Execution"],
+      "technique": ["PowerShell"]
+    }
+  },
+  "agent": {
+    "id": "001",
+    "name": "Windows-11-Endpoint",
+    "ip": "10.0.2.15"
+  },
+  "manager": {
+    "name": "ubuntu-soc-server"
+  },
+  "data": {
+    "win": {
+      "eventdata": {
+        "UtcTime": "2026-09-20 10:15:02.120",
+        "ProcessGuid": "{d41d8cd9-8f00-b204-e980-0998ecf8427e}",
+        "ProcessId": "4820",
+        "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "CommandLine": "powershell.exe -NoProfile -Command \"Get-Process | Select-Object -First 5\"",
+        "CurrentDirectory": "C:\\Users\\mukesh-soc\\",
+        "User": "WIN11\\mukesh-soc",
+        "Hashes": "SHA256=9A5964EF56B72213F988220A8E3F28599E6C99596B272D0B6A786277D8DBA59D,MD5=653457DCEEB0BEFE6B428A6D3A072462",
+        "ParentProcessGuid": "{d41d8cd9-8f00-b204-e980-0998ecf8427f}",
+        "ParentProcessId": "3124",
+        "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+        "ParentCommandLine": "cmd.exe"
+      },
+      "system": {
+        "eventID": "1",
+        "channel": "Microsoft-Windows-Sysmon/Operational",
+        "computer": "Windows-11-Endpoint"
+      }
+    }
+  }
+}

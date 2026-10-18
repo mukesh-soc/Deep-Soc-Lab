@@ -1,0 +1,51 @@
+{
+  "admin": {
+    "username": "admin",
+    "full_name": "Mukesh Jena (Lead SOC Architect)",
+    "role": "admin",
+    "email": "mukesh.soc.analyst@gmail.com",
+    "password_hash": "b453823a7512dab0090340fbf10040c0$b7bae458fc5b209cef9a2f35b126c45ddcbe083a7f9e79211c7411dab67cfc9b",
+    "totp_enabled": true,
+    "totp_secret": "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP",
+    "permissions": [
+      "all",
+      "manage_users",
+      "soar_execute",
+      "rule_editor",
+      "incident_write"
+    ],
+    "created_at": "2026-09-20T10:00:00Z"
+  },
+  "analyst": {
+    "username": "analyst",
+    "full_name": "Tier 2 SOC Incident Responder",
+    "role": "analyst",
+    "email": "analyst@sentinelx.soc.local",
+    "password_hash": "969dec3807ba12bdade08990719ce079$ddcf1cc255db4d606137929eceea3ea2448f2c118d7cad989efb56c744579ac1",
+    "totp_enabled": true,
+    "totp_secret": "KZXW6YTBOJRGC4TGMRSW45DJONPWK43U",
+    "permissions": [
+      "incident_read",
+      "incident_write",
+      "threat_hunt",
+      "ioc_enrich"
+    ],
+    "created_at": "2026-09-20T10:00:00Z"
+  },
+  "recruiter": {
+    "username": "recruiter",
+    "full_name": "Technical Recruiter / Hiring Evaluator",
+    "role": "recruiter_evaluator",
+    "email": "hiring.manager@enterprise.com",
+    "password_hash": "1d28f7c742e55a1161648e4adc0782f8$d4428e6dfce22fa6c2cae5da139525e3a151da7598668ed1ed925d8eac8381dd",
+    "totp_enabled": true,
+    "totp_secret": "MFRGGZDFMZTWQ2LKNNWG23TPOBYXE43U",
+    "permissions": [
+      "all_read",
+      "simulate_attacks",
+      "export_reports",
+      "showcase_mode"
+    ],
+    "created_at": "2026-10-16T12:00:00Z"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-10-15T09:20:12.800Z",
+  "rule": {
+    "level": "Critical",
+    "description": "APT29 Cobalt Strike C2 Network Beaconing Detected",
+    "id": "SENTINELX-DET-005",
+    "mitre": {
+      "id": ["T1573", "T1071"],
+      "tactic": ["Command and Control"],
+      "technique": ["Encrypted Channel"]
+    }
+  },
+  "agent": {
+    "id": "001",
+    "name": "Windows-11-Endpoint",
+    "ip": "10.0.2.15"
+  },
+  "data": {
+    "win": {
+      "eventdata": {
+        "UtcTime": "2026-10-15 09:20:11.200",
+        "ProcessId": "5128",
+        "Image": "C:\\Windows\\System32\\rundll32.exe",
+        "CommandLine": "rundll32.exe C:\\ProgramData\\payload.dll,DllRegisterServer",
+        "SourceIp": "10.0.2.15",
+        "DestinationIp": "198.51.100.45",
+        "DestinationPort": "443",
+        "Hashes": "SHA256=a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0"
+      }
+    }
+  }
+}

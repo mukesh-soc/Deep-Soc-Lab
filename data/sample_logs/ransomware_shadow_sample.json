@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-10-16T08:14:22.100Z",
+  "rule": {
+    "level": "Critical",
+    "description": "Ransomware Inhibit System Recovery (VSS Shadow Deletion)",
+    "id": "SENTINELX-DET-006",
+    "mitre": {
+      "id": ["T1490"],
+      "tactic": ["Impact"],
+      "technique": ["Inhibit System Recovery"]
+    }
+  },
+  "agent": {
+    "id": "001",
+    "name": "Windows-11-Endpoint",
+    "ip": "10.0.2.15"
+  },
+  "data": {
+    "win": {
+      "eventdata": {
+        "ProcessId": "7712",
+        "Image": "C:\\Windows\\System32\\vssadmin.exe",
+        "CommandLine": "vssadmin.exe delete shadows /all /quiet",
+        "Hashes": "SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  }
+}

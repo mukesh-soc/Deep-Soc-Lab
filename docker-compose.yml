@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  sentinelx-siem:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentinelx-soc-platform
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5000
+      - SECRET_KEY=production-sentinelx-security-key-2026!
+      # Optional live MISP integration
+      - MISP_URL=http://127.0.0.1
+      - MISP_API_KEY=${MISP_API_KEY:-}
+    volumes:
+      - sentinelx_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - soc-network
+
+volumes:
+  sentinelx_data:
+    driver: local
+
+networks:
+  soc-network:
+    driver: bridge

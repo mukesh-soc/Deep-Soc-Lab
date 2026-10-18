@@ -1,0 +1,197 @@
+{
+  "192.0.2.123": {
+    "value": "192.0.2.123",
+    "type": "ip",
+    "is_malicious": true,
+    "threat_score": 95,
+    "threat_actor": "Controlled Lab Validation (Mukesh SOC)",
+    "category": "Network activity",
+    "event_id": 1,
+    "event_info": "SentinelX Positive Zeek-to-MISP IOC Match Validation",
+    "confidence": "High",
+    "comment": "Controlled test IOC passed in HTTP Host header to validate Zeek & MISP pipeline",
+    "tags": [
+      "sentinelx:verified-ioc",
+      "misp:ip-dst",
+      "tlp:white",
+      "soc-lab"
+    ],
+    "mitre_techniques": [
+      "T1071.001 - Application Layer Protocol: Web",
+      "T1041 - Exfiltration Over C2"
+    ],
+    "geo": {
+      "country": "Documentation Net",
+      "city": "TEST-NET-1",
+      "asn": "AS64496"
+    }
+  },
+  "198.51.100.45": {
+    "value": "198.51.100.45",
+    "type": "ip",
+    "is_malicious": true,
+    "threat_score": 98,
+    "threat_actor": "APT29 / Cozy Bear",
+    "category": "Antivirus detection / C2",
+    "event_id": 104,
+    "event_info": "Cobalt Strike Malleable C2 Beacon Listener",
+    "confidence": "Critical",
+    "comment": "Identified staging C2 server communicating over port 443 with randomized heartbeat jitter",
+    "tags": [
+      "actor:apt29",
+      "malware:cobaltstrike",
+      "threat:c2-server",
+      "tlp:amber"
+    ],
+    "mitre_techniques": [
+      "T1071 - Application Layer Protocol",
+      "T1573 - Encrypted Channel",
+      "T1090 - Proxy"
+    ],
+    "geo": {
+      "country": "Russian Federation",
+      "city": "Moscow",
+      "asn": "AS4134"
+    }
+  },
+  "update-service-cdn.xyz": {
+    "value": "update-service-cdn.xyz",
+    "type": "domain",
+    "is_malicious": true,
+    "threat_score": 92,
+    "threat_actor": "Lumma Stealer Syndicate",
+    "category": "Payload delivery",
+    "event_id": 301,
+    "event_info": "Information Stealer Exfiltration Endpoint",
+    "confidence": "High",
+    "comment": "Newly registered domain used in phishing drive-by lure targeting crypto & browser sessions",
+    "tags": [
+      "malware:lummastealer",
+      "type:domain",
+      "phishing:credential-stealer"
+    ],
+    "mitre_techniques": [
+      "T1566.002 - Spearphishing Link",
+      "T1048 - Exfiltration Over Alternative Protocol"
+    ],
+    "geo": {
+      "country": "Seychelles",
+      "city": "Victoria",
+      "asn": "AS197695"
+    }
+  },
+  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": {
+    "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "type": "sha256",
+    "is_malicious": true,
+    "threat_score": 99,
+    "threat_actor": "LockBit 3.0 / Ransomware Operator",
+    "category": "Artifacts dropped",
+    "event_id": 202,
+    "event_info": "LockBit Black Encryptor Staging Binary",
+    "confidence": "Critical",
+    "comment": "High entropy executable with volume shadow copy deletion routines (vssadmin delete shadows /all /quiet)",
+    "tags": [
+      "malware:lockbit3",
+      "ransomware:encryptor",
+      "tlp:red"
+    ],
+    "mitre_techniques": [
+      "T1486 - Data Encrypted for Impact",
+      "T1490 - Inhibit System Recovery"
+    ],
+    "geo": {}
+  },
+  "2b8a74e2d3f458129a0c7102e3b1c6d8": {
+    "value": "2b8a74e2d3f458129a0c7102e3b1c6d8",
+    "type": "md5",
+    "is_malicious": true,
+    "threat_score": 90,
+    "threat_actor": "Red Team Emulation / Mimikatz",
+    "category": "Credential access",
+    "event_id": 115,
+    "event_info": "Invoke-Mimikatz PowerShell Memory Module",
+    "confidence": "High",
+    "comment": "Extracts plaintext credentials and Kerberos tickets directly from LSASS process memory",
+    "tags": [
+      "tool:mimikatz",
+      "tactic:credential-dumping",
+      "tlp:amber"
+    ],
+    "mitre_techniques": [
+      "T1003.001 - LSASS Memory Dumping",
+      "T1059.001 - PowerShell"
+    ],
+    "geo": {}
+  },
+  "45.33.32.156": {
+    "value": "45.33.32.156",
+    "type": "ip",
+    "is_malicious": true,
+    "threat_score": 88,
+    "threat_actor": "Automated Recon Scanner",
+    "category": "Network activity",
+    "event_id": 404,
+    "event_info": "Masscan & RDP / SSH Password Spraying",
+    "confidence": "Medium",
+    "comment": "Host observed sending 800+ SYN packets per minute against port 3389 and 22",
+    "tags": [
+      "scan:masscan",
+      "attack:password-spraying",
+      "scanner"
+    ],
+    "mitre_techniques": [
+      "T1110.003 - Password Spraying",
+      "T1046 - Network Service Discovery"
+    ],
+    "geo": {
+      "country": "United States",
+      "city": "Fremont",
+      "asn": "AS63949"
+    }
+  },
+  "10.0.2.15": {
+    "value": "10.0.2.15",
+    "type": "ip",
+    "is_malicious": false,
+    "threat_score": 0,
+    "threat_actor": "Internal Asset",
+    "category": "Internal Endpoint",
+    "event_id": 0,
+    "event_info": "Windows-11-Endpoint (Lab Agent 001)",
+    "confidence": "Trusted",
+    "comment": "Primary Windows 11 endpoint with Sysmon and Wazuh agent installed",
+    "tags": [
+      "asset:workstation",
+      "trusted:internal"
+    ],
+    "mitre_techniques": [],
+    "geo": {
+      "country": "Internal Lab LAN",
+      "city": "VirtualBox Host-Only",
+      "asn": "RFC1918"
+    }
+  },
+  "10.0.2.4": {
+    "value": "10.0.2.4",
+    "type": "ip",
+    "is_malicious": false,
+    "threat_score": 0,
+    "threat_actor": "Internal Asset",
+    "category": "Internal Server",
+    "event_id": 0,
+    "event_info": "Ubuntu SOC Server (Wazuh & Zeek Core)",
+    "confidence": "Trusted",
+    "comment": "Central Ubuntu SOC analysis host running Wazuh Manager, Zeek monitor, and SentinelX",
+    "tags": [
+      "asset:soc-server",
+      "trusted:internal"
+    ],
+    "mitre_techniques": [],
+    "geo": {
+      "country": "Internal Lab LAN",
+      "city": "Ubuntu SOC Server",
+      "asn": "RFC1918"
+    }
+  }
+}

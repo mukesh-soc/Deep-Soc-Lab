@@ -1,0 +1,42 @@
+name: SentinelX CI / Quality & Security Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Module Imports & Core Integrity
+        run: |
+          python -c "from core.auth import load_users; print('Auth OK')"
+          python -c "from core.misp_enricher import MISPEnricher; print('MISP OK')"
+          python -c "from core.detection_engine import DetectionEngine; print('Rules OK')"
+          python -c "from core.siem_engine import SIEMEngine; print('SIEM Core OK')"
+          python -c "from core.case_manager import CaseManager; print('Case Manager OK')"
+          python -c "from core.soar_engine import SOAREngine; print('SOAR OK')"
+
+      - name: Execute Detection & Enrichment Validation Test
+        run: |
+          python -c "from core.misp_enricher import MISPEnricher; e = MISPEnricher(); assert e.enrich_ioc('192.0.2.123')['misp_match'] == True; print('Mukesh Lab IOC Test: PASSED')"
+
+      - name: Verify Webhook and Flask App Startup
+        run: |
+          python -c "import app; print('Flask Application Loaded Successfully')"

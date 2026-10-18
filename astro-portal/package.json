@@ -1,0 +1,14 @@
+{
+  "name": "sentinelx-astro-portal",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev --port 3000 --host",
+    "start": "astro dev --port 3000 --host",
+    "build": "astro build",
+    "preview": "astro preview --port 3000"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}
