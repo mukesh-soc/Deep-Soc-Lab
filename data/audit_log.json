@@ -38,5 +38,13 @@
     "status": "SUCCESS",
     "details": "Full 2FA authentication complete",
     "client_ip": "127.0.0.1"
+  },
+  {
+    "timestamp": "2026-10-19T07:11:37Z",
+    "event_type": "AUTH_ADMIN_QUICK_LOGIN",
+    "username": "admin",
+    "status": "SUCCESS",
+    "details": "1-Click Direct Admin Access",
+    "client_ip": "127.0.0.1"
   }
 ]

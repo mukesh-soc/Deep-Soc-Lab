@@ -192,6 +192,39 @@ async function autofillRecruiter2FA() {
   }
 }
 
+// Admin 1-Click Direct Access for Mukesh Jena
+async function quickAdminLogin() {
+  try {
+    const res = await fetch('/api/v1/auth/quick_admin_login', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      completeLogin(data.token, data.user);
+    } else {
+      alert('Admin login error: ' + (data.error || 'Failed'));
+    }
+  } catch (err) {
+    alert('Unable to connect to Admin authentication endpoint');
+  }
+}
+
+// Admin 2FA Code Autofill Helper
+async function autofillAdmin2FA() {
+  try {
+    const res = await fetch('/api/v1/auth/admin_quick_code');
+    const data = await res.json();
+    if (data.current_totp) {
+      document.getElementById('totpTokenInput').value = data.current_totp;
+      const hint = document.getElementById('totpAutofillHint');
+      if (hint) {
+        hint.innerText = `Admin live TOTP code: ${data.current_totp} (${data.seconds_remaining}s left)`;
+        hint.style.color = '#10b981';
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch admin TOTP:', err);
+  }
+}
+
 // 2FA Setup QR Code Modal
 async function open2FASetupModal() {
   const username = AuthState.user ? AuthState.user.username : 'recruiter';

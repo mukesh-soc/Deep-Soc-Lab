@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "buildCommand": "cd astro-portal && npm install && npm run build",
+  "outputDirectory": "astro-portal/dist",
+  "cleanUrls": true
+}

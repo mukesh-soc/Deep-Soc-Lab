@@ -1,0 +1,88 @@
+name: Deploy SentinelX to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Core Verification Tests
+        env:
+          PYTHONPATH: .
+        run: |
+          python -c "from core.auth import load_users; print('Auth OK')"
+          python -c "from core.misp_enricher import MISPEnricher; e = MISPEnricher(); assert e.enrich_ioc('192.0.2.123')['misp_match'] == True; print('MISP Enrichment OK')"
+          python -c "from core.detection_engine import DetectionEngine; print('Detection Rules OK')"
+          python -c "from core.siem_engine import SIEMEngine; print('SIEM Pipeline OK')"
+          python -c "from core.case_manager import CaseManager; print('Case Manager OK')"
+          python -c "from core.soar_engine import SOAREngine; print('SOAR OK')"
+          python -c "import app; print('Flask Application OK')"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Astro Threat Operations Portal
+        run: |
+          cd astro-portal
+          npm install
+          npm run build
+
+      - name: Assemble Production GitHub Pages Site
+        run: |
+          mkdir -p _site
+          # Copy primary recruiter showcase landing page
+          cp index.html _site/index.html
+          # Copy static styles, scripts, charts
+          cp -r static _site/static
+          # Copy evidence and screenshots for investigation viewing
+          if [ -d "screenshots" ]; then cp -r screenshots _site/screenshots; fi
+          if [ -d "evidence" ]; then cp -r evidence _site/evidence; fi
+          # Copy Astro build output
+          mkdir -p _site/astro
+          cp -r astro-portal/dist/* _site/astro/
+          # Prevent Jekyll processing
+          touch _site/.nojekyll
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: test-and-build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

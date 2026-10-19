@@ -25,6 +25,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Verify Module Imports & Core Integrity
+        env:
+          PYTHONPATH: .
         run: |
           python -c "from core.auth import load_users; print('Auth OK')"
           python -c "from core.misp_enricher import MISPEnricher; print('MISP OK')"
@@ -34,9 +36,24 @@ jobs:
           python -c "from core.soar_engine import SOAREngine; print('SOAR OK')"
 
       - name: Execute Detection & Enrichment Validation Test
+        env:
+          PYTHONPATH: .
         run: |
           python -c "from core.misp_enricher import MISPEnricher; e = MISPEnricher(); assert e.enrich_ioc('192.0.2.123')['misp_match'] == True; print('Mukesh Lab IOC Test: PASSED')"
 
       - name: Verify Webhook and Flask App Startup
+        env:
+          PYTHONPATH: .
         run: |
           python -c "import app; print('Flask Application Loaded Successfully')"
+
+      - name: Setup Node.js & Test Astro Build
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Astro Portal
+        run: |
+          cd astro-portal
+          npm install
+          npm run build
